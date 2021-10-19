@@ -92,6 +92,9 @@ function createElement(type, props, ...children) {
   function commitRoot() {
     deletions.forEach(commitWork)
     commitWork(wipRoot.child)
+    /**
+     * 保存上次提交到dom的fiber树
+     */
     currentRoot = wipRoot
     wipRoot = null
   }
@@ -125,11 +128,15 @@ function createElement(type, props, ...children) {
   }
   
   function render(element, container) {
+    debugger
     wipRoot = {
       dom: container,
       props: {
         children: [element],
       },
+      /**
+       * 保存上次提交到dom的fiber树
+       */
       alternate: currentRoot,
     }
     deletions = []
@@ -159,6 +166,11 @@ function createElement(type, props, ...children) {
   
   requestIdleCallback(workLoop)
   
+  /**
+   * 1. 把 element 添加到 DOM 上
+   * 2. 为该 fiber 节点的子节点新建 fiber，包括建立fiber建的引用关系，目的是为了return
+   * 3. 挑出下一个任务单元（child => sibling => uncle）
+   */
   function performUnitOfWork(fiber) {
     if (!fiber.dom) {
       fiber.dom = createDom(fiber)
@@ -179,6 +191,9 @@ function createElement(type, props, ...children) {
     }
   }
   
+  /**
+   * diff
+   */
   function reconcileChildren(wipFiber, elements) {
     let index = 0
     let oldFiber =
@@ -227,11 +242,12 @@ function createElement(type, props, ...children) {
       }
   
       if (index === 0) {
+        // 建立父子节点的引用关系， newFiber.parent <-> wipFiber.child
         wipFiber.child = newFiber
       } else if (element) {
+        // 建立兄弟节点的引用
         prevSibling.sibling = newFiber
       }
-  
       prevSibling = newFiber
       index++
     }
@@ -242,21 +258,21 @@ function createElement(type, props, ...children) {
     render,
   }
   
-  /** @jsx Didact.createElement */
-  const container = document.getElementById("root")
+  // /** @jsx Didact.createElement */
+  // const container = document.getElementById("root")
   
-  const updateValue = e => {
-    rerender(e.target.value)
-  }
+  // const updateValue = e => {
+  //   rerender(e.target.value)
+  // }
   
-  const rerender = value => {
-    const element = (
-      <div>
-        <input onInput={updateValue} value={value} />
-        <h2>Hello {value}</h2>
-      </div>
-    )
-    Didact.render(element, container)
-  }
+  // const rerender = value => {
+  //   const element = (
+  //     <div>
+  //       <input onInput={updateValue} value={value} />
+  //       <h2>Hello {value}</h2>
+  //     </div>
+  //   )
+  //   Didact.render(element, container)
+  // }
   
-  rerender("World")
+  // rerender("World")
