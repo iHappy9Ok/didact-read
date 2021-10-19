@@ -1,4 +1,4 @@
-import {Didact} from './src/withoutHook'
+import {Didact} from './utils/withoutHook'
 
   // /** @jsx Didact.createElement */
   // const element = (
