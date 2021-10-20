@@ -89,6 +89,7 @@ function createElement(type, props, ...children) {
     }
     const domParent = domParentFiber.dom;
   
+    // 如果fiber是FC没有dom，则跳过
     if (fiber.effectTag === "PLACEMENT" && fiber.dom != null) {
       domParent.appendChild(fiber.dom);
     } else if (fiber.effectTag === "UPDATE" && fiber.dom != null) {
@@ -193,6 +194,7 @@ function createElement(type, props, ...children) {
       wipRoot = {
         dom: currentRoot.dom,
         props: currentRoot.props,
+        // 根节点的alternate在此设置
         alternate: currentRoot
       };
       nextUnitOfWork = wipRoot;
@@ -204,6 +206,9 @@ function createElement(type, props, ...children) {
     return [hook.state, setState];
   }
   
+  /**
+   * 非函数组件
+   */
   function updateHostComponent(fiber) {
     if (!fiber.dom) {
       fiber.dom = createDom(fiber);
@@ -228,6 +233,7 @@ function createElement(type, props, ...children) {
           props: element.props,
           dom: oldFiber.dom,
           parent: wipFiber,
+          // 上一轮渲染的fiber
           alternate: oldFiber,
           effectTag: "UPDATE"
         };
@@ -278,15 +284,15 @@ function createElement(type, props, ...children) {
   //   );
   // }
   
-  /** @jsx Didact.createElement */
-  const element = (
-    <div style="background: salmon">
-      <h1>hhhhhh</h1>
-      <h2 style="text-align:right">from Didact</h2>
-    </div>
-  );
+  // /** @jsx Didact.createElement */
+  // const element = (
+  //   <div style="background: salmon">
+  //     <h1>hhhhhh</h1>
+  //     <h2 style="text-align:right">from Didact</h2>
+  //   </div>
+  // );
   
-  // const element = <Counter />;
-  const container = document.getElementById("root");
-  Didact.render(element, container);
+  // // const element = <Counter />;
+  // const container = document.getElementById("root");
+  // Didact.render(element, container);
   
